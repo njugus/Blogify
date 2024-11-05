@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id  String  @id @default(uuid())
+  username String?
+  firstname String
+  secondname String
+  email String @unique
+  password String
+  role  String @default("user")
+  posts Post[]
+  comments Comment[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Post{
+  id String @id @default(uuid())
+  title String
+  content String
+  author User @relation(fields: [author_id], references: [id])
+  author_id String
+  post_category Category @relation(fields: [post_category_id], references: [id])
+  post_category_id String
+  comments Comment[]
+  tags   Tag[]  @relation("PostTags")
+  published Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+} 
+
+model Category{
+  id String @id @default(uuid())
+  name String @unique
+  description String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  posts Post[]
+}
+
+model Comment{
+  id String @id @default(uuid())
+  content String
+  post_comment  Post @relation(fields: [post_id], references: [id])
+  post_id String
+  user_comment User @relation(fields: [user_id], references: [id])
+  user_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Tag{
+  id String @id @default(uuid())
+  name String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  post Post[] @relation("PostTags")
+}
+
+
