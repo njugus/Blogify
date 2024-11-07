@@ -55,5 +55,66 @@ export const getAllPosts = async(req, res) => {
     }
 }
 
+//update a post
+export const updateAPost = async(req, res) => {
+    const { id } = req.params
+    const { title, content, tags } = req.body
+
+    const updatedFields = {}
+    if( title !== undefined ){ updatedFields.title = title}
+    if(content !== undefined ) { updatedFields.content = content}
+    if(tags !== undefined ) { updatedFields.tags = tags}
+
+    if(Object.keys(updatedFields).length === 0){
+        return res.status(404).json({
+            message : "No fields to be updated"
+        })
+    }
+    try{
+        const updates = await prisma.post.update({
+            where : { id : id},
+            data : updatedFields,
+        })
+        res.status(200).json({
+            success : true,
+            message : "Record Updated SuccessFully",
+            data : updates
+        })
+        
+    }catch(error){
+        res.status(500).json({
+            success : false,
+            message : error.message || "An error occured during the update"
+        })
+    }
+
+}
+
+//delete a post
+export const deleteAPost = async(req, res) => {
+    const{ id } = req.params
+    const user_id = req.user.id
+    try{
+        //check whether the post exists
+        const postToBeDeleted = await prisma.post.findUnique({
+            where : { id : parseInt(id)}
+        })
+        if (!postToBeDeleted || postToBeDeleted.author_id !== user_id){
+            return res.status(404).json({
+                success : false,
+                message : "Unauthorized User"
+            })
+        }
+        const response = await prisma.post.delete({
+            where : { id : id}
+        })
+        res.status(200).json({ success : true, message : "Record deleted Successfully", data : response})
+    }catch(error){
+        res.status(500).json({
+            success : false,
+            message : error.message || "Error deleting Post"
+        })
+    }
+}
 
 
