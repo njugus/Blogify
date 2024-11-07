@@ -97,7 +97,7 @@ export const deleteAPost = async(req, res) => {
     try{
         //check whether the post exists
         const postToBeDeleted = await prisma.post.findUnique({
-            where : { id : parseInt(id)}
+            where : { id : id}
         })
         if (!postToBeDeleted || postToBeDeleted.author_id !== user_id){
             return res.status(404).json({
