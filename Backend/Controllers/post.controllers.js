@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
+//CRUD
 //create a Post
 export const createAnewPost = async(req, res) => {
     const user_id = req.user.id
@@ -38,6 +39,19 @@ export const createAnewPost = async(req, res) => {
         res.status(201).json({ success : true, data : newPost})
     }catch(error){
         res.status(500).json({ success : false, message : error.message || "Error Creating Post"})
+    }
+}
+
+//get all the Posts
+export const getAllPosts = async(req, res) => {
+    try{
+        const allPosts = await prisma.post.findMany()
+        res.status(200).json({ success : true, data : allPosts})
+    }catch(error){
+        res.status(500).json({
+            success : false,
+            message : error.message || "Could Not get All Posts"
+        })
     }
 }
 
