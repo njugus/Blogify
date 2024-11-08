@@ -24,6 +24,7 @@ app.use("/updateAPost/v1", postRouter)
 app.use("/getAllTags/v1", tagRouter)
 app.use("/deletePost/v1", postRouter)
 app.use("/comment/v1", commentRouter)
+app.use("/getPostComments/v1", commentRouter)
 
 
 app.listen(PORT, () => {
